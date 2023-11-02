@@ -13,19 +13,7 @@ interface TaskProps {
 
 const Task: React.FC<TaskProps> = ({ task }) => {
   const router = useRouter();
-  const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalDeleted, setOpenModalDeleted] = useState<boolean>(false);
-  const [taskToEdit, setTaskToEdit] = useState<string>(task.text);
-
-  const handleSubmitEditTodo: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    await editTodo({
-      id: task.id,
-      text: taskToEdit,
-    });
-    setOpenModalEdit(false);
-    router.refresh();
-  };
 
   const handleDeleteTask = async (id: string) => {
     await deleteTodo(id);
@@ -38,36 +26,11 @@ const Task: React.FC<TaskProps> = ({ task }) => {
       <td className="w-full">{task.text}</td>
       <td className="flex gap-5">
         <FiEdit
-          onClick={() => setOpenModalEdit(true)}
+          onClick={() => router.push(`/edit/${task.id}`)}
           cursor="pointer"
           className="text-blue-500"
           size={25}
         />
-
-        <div style={{ textAlign: "center" }}>
-          <Modal modalOpen={openModalEdit} setModalOpen={setOpenModalEdit}>
-            <form onSubmit={handleSubmitEditTodo}>
-              <span style={{ fontSize: "28px" }}>Update the task</span>
-              <div className="flex flex-col">
-                <input
-                  value={taskToEdit}
-                  onChange={(e) => setTaskToEdit(e.target.value)}
-                  type="text"
-                  placeholder="Type here"
-                  className="p-4 mb-2"
-                />
-
-                <button
-                  style={{ backgroundColor: "black", color: "white" }}
-                  className="px-4 py-2 rounded"
-                  type="submit"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
-          </Modal>
-        </div>
         <FiTrash2
           onClick={() => setOpenModalDeleted(true)}
           cursor="pointer"
